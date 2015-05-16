@@ -55,3 +55,6 @@ lazy val akkaConstructTest = (project in file("akkaConstructTest")).settings(com
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion
   )
 ).dependsOn(akkaConstruct % "compile->compile;test->test")
+
+// Disable publishing for aggregate root
+publish := {}
