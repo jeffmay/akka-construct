@@ -28,6 +28,7 @@ lazy val akkaVersion = "2.3.11"
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.4",
+  "org.mockito" % "mockito-all" % "1.10.19" % "test",
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
 )
