@@ -1,12 +1,23 @@
 package akka.contrib.construct
 
-import akka.actor.{ActorRef, Actor}
-import akka.routing.RouterConfig
-import ActorOfSpec._
+import akka.actor.{Actor, ActorRef, ActorSystem}
+import akka.contrib.construct.ActorOfSpec._
+import akka.testkit.{ImplicitSender, TestKitBase}
 import org.scalatest.FlatSpec
 import org.scalatest.mock.MockitoSugar
 
-class ActorOfSpec extends FlatSpec with AkkaTestKit with SpecNumber with MockitoSugar {
+class ActorOfSpec extends FlatSpec
+with TestKitBase
+with ImplicitSender
+with ImplicitActorSystem
+with SpecNumber
+with MockitoSugar {
+  override lazy val system: ActorSystem = ActorSystem(getClass.getSimpleName)
+  override implicit protected def actorSystem: ActorSystem = system
+
+  "ActorOf" should behave like anActorOf("TestActorRef", _.ref, _.ref(_), _.constructRefUsing(_))
+
+  "CustomActorOf" should behave like aCustomActorOf("an ActorRef", _.ref, _.ref(_), _.ref)
 
   def anActorOf(
     refType: String,
@@ -37,26 +48,6 @@ class ActorOfSpec extends FlatSpec with AkkaTestKit with SpecNumber with Mockito
       expectMsg(expected)
     }
   }
-
-  /**
-   * as provided by [[ImplicitTestActorOf]] in [[AkkaTestKit]]
-   */
-  behavior of "TestActorOfOps"
-
-  it should behave like anActorOf("ActorRef", _.testRef, _.testRef(_), _.constructTestRefUsing(_))
-
-  it should "create the TestActorRef with the props supplied by the props config function" in {
-    val expected = mock[RouterConfig]("Fake Router provided by Props")
-    val childActor = ActorOf(new Child(Seq()))
-    // assuming that TestActorRef does not muck with RouterConfig
-    val childActorWithProps = childActor.withPropsConfig(_.withRouter(expected))
-    val child = childActorWithProps.testRef
-    assert(child.props.routerConfig == expected)
-  }
-
-  behavior of "ActorOf"
-  
-  it should behave like anActorOf("TestActorRef", _.ref, _.ref(_), _.constructRefUsing(_))
 
   def aCustomActorOf(
     refType: String,
@@ -103,30 +94,9 @@ class ActorOfSpec extends FlatSpec with AkkaTestKit with SpecNumber with Mockito
       expectMsg(expected)
     }
   }
-
-  /**
-   * As provided by [[ImplicitTestActorOf]] in [[AkkaTestKit]]
-   */
-  behavior of "TestCustomActorOf"
-
-  it should behave like aCustomActorOf("TestActorRef", _.testRef, _.testRef(_), _.testRef)
-
-  it should "create an ActorRef with the props supplied by the props config function" in {
-    val expected = mock[RouterConfig]("Fake Router provided by Props")
-    val childActor = ActorOf(new Child(_: Seq[String]), Seq())
-    // assuming that TestActorRef does not muck with RouterConfig
-    val childActorWithProps = childActor.withPropsConfig(_.withRouter(expected))
-    val child = childActorWithProps.testRef
-    assert(child.props.routerConfig == expected)
-  }
-
-  behavior of "CustomActorOf"
-
-  it should behave like aCustomActorOf("an ActorRef", _.ref, _.ref(_), _.ref)
-
 }
 
-object ActorOfSpec extends ImplicitTestActorOf {
+object ActorOfSpec {
 
   case object GetPath
 
