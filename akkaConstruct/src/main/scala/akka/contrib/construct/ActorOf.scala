@@ -152,21 +152,21 @@ class ActorOf[A <: Actor: ClassTag] private[akka] (
   /**
    * Creates the actor instance as a child of the current context.
    */
-  protected def actorOf(initialize: => A, name: String = null)(implicit context: ActorRefFactory): ActorRef = {
+  protected def actorOf(initialize: => A, name: String = null)(implicit params: ConstructActorParams): ActorRef = {
     name match {
-      case null => context.actorOf(configure(Props(initialize)(actorClassTag)))
-      case _    => context.actorOf(configure(Props(initialize)(actorClassTag)), name)
+      case null => params.context.actorOf(configure(Props(initialize)(actorClassTag)))
+      case _    => params.context.actorOf(configure(Props(initialize)(actorClassTag)), name)
     }
   }
 
   /**
    * Construct an instance of the actor OR get the singleton actor.
    *
-   * @param context the context where this actor is being created
+   * @param params TODO
    */
   @throws[ConfigurationException]("if Akka is not configured properly")
   @throws[SingletonActorAlreadyInitialized]("if this is called twice on a SingletonActorOf")
-  def ref(implicit context: ActorRefFactory): ActorRef = actorOf(initialize())
+  def ref(implicit params: ConstructActorParams): ActorRef = actorOf(initialize())
 
   /**
    * Construct an instance of the actor
@@ -174,29 +174,29 @@ class ActorOf[A <: Actor: ClassTag] private[akka] (
   @throws[ConfigurationException]("if Akka is not configured properly")
   @throws[InvalidActorNameException]("if the actor name is already taken")
   @throws[SingletonActorAlreadyInitialized]("if this is called twice on a SingletonActorOf")
-  def ref(name: String)(implicit context: ActorRefFactory): ActorRef = actorOf(initialize(), name)
+  def ref(name: String)(implicit params: ConstructActorParams): ActorRef = actorOf(initialize(), name)
 
   /**
    * Create the instance of the actor using the provided initializer value.
    *
    * @param init the block of code that will initialize the actor
-   * @param context the context where this actor is being created
+   * @param params TODO
    */
   @throws[ConfigurationException]("if Akka is not configured properly")
   @throws[SingletonActorAlreadyInitialized]("if this is called twice on a SingletonActorOf")
-  def constructRefUsing(init: => A)(implicit context: ActorRefFactory): ActorRef = actorOf(init)
+  def constructRefUsing(init: => A)(implicit params: ConstructActorParams): ActorRef = actorOf(init)
 
   /**
    * Create the instance of the actor using the provided initializer value and the given name.
    *
    * @param init the block of code that will initialize the actor
    * @param name the name to give the actor, acts as the relative path
-   * @param context the context where this actor is being created
+   * @param params TODO
    */
   @throws[ConfigurationException]("if Akka is not configured properly")
   @throws[InvalidActorNameException]("if the actor name is already taken")
   @throws[SingletonActorAlreadyInitialized]("if this is called twice on a SingletonActorOf")
-  def constructRefUsing(init: => A, name: String)(implicit context: ActorRefFactory): ActorRef = actorOf(init, name)
+  def constructRefUsing(init: => A, name: String)(implicit params: ConstructActorParams): ActorRef = actorOf(init, name)
 
   /**
    * Create a singleton version of this [[ActorOf]].
@@ -245,7 +245,7 @@ trait SingletonActorOf[A <: Actor] extends ActorOf[A] {
   /**
    * Sets / returns the singleton actor
    */
-  override protected def actorOf(initialize: => A, name: String = null)(implicit context: ActorRefFactory): ActorRef = {
+  override protected def actorOf(initialize: => A, name: String = null)(implicit context: ConstructActorParams): ActorRef = {
     if (actor ne null) {
       if (name eq null) actor
       else throw new SingletonActorAlreadyInitialized(actor)
@@ -291,12 +291,12 @@ class CustomActorOf[A <: Actor: ClassTag, P] private[akka] (
    *       with the common [[ActorOf]] and is less to type.
    *
    * @param args the argument to pass to the default constructor
-   * @param context the context to use when creating the actor
+   * @param params TODO
    */
   @throws[ConfigurationException]("if Akka is not configured properly")
   @throws[InvalidActorNameException]("if the actor name is already taken")
   @throws[SingletonActorAlreadyInitialized]("if this is called twice on a SingletonActorOf")
-  def constructRef(args: => P, name: String = null)(implicit context: ActorRefFactory): ActorRef = {
+  def constructRef(args: => P, name: String = null)(implicit params: ConstructActorParams): ActorRef = {
     actorOf(defaultConstructor(args), name)
   }
 
@@ -304,14 +304,14 @@ class CustomActorOf[A <: Actor: ClassTag, P] private[akka] (
    * Use an implicit [[Constructor]] of the appropriate type to create this instance.
    *
    * @param args the argument to pass to the constructor function
-   * @param context the context to use when creating the actor
+   * @param params TODO
    * @param constructor the implicit constructor function
    */
   @throws[ConfigurationException]("if Akka is not configured properly")
   @throws[InvalidActorNameException]("if the actor name is already taken")
   @throws[SingletonActorAlreadyInitialized]("if this is called twice on a SingletonActorOf")
   def constructRefImplicitly(args: => P = defaultArgs(), name: String = null)
-    (implicit context: ActorRefFactory, constructor: Constructor[P, A]): ActorRef = {
+    (implicit params: ConstructActorParams, constructor: Constructor[P, A]): ActorRef = {
     actorOf(constructor(args), name)
   }
 
@@ -320,13 +320,13 @@ class CustomActorOf[A <: Actor: ClassTag, P] private[akka] (
    *
    * @param constructor the function to use to construct an instance of the actor
    * @param args the argument to pass to the constructor function
-   * @param context the context to use when creating the actor
+   * @param params TODO
    */
   @throws[ConfigurationException]("if Akka is not configured properly")
   @throws[InvalidActorNameException]("if the actor name is already taken")
   @throws[SingletonActorAlreadyInitialized]("if this is called twice on a SingletonActorOf")
   def constructRefUsing(constructor: P => A, args: => P = defaultArgs(), name: String = null)
-    (implicit context: ActorRefFactory): ActorRef = {
+    (implicit params: ConstructActorParams): ActorRef = {
     actorOf(constructor(defaultArgs()), name)
   }
 
