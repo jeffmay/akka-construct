@@ -1,7 +1,7 @@
 lazy val commonRootSettings = Seq(
   organization := "me.jeffmay",
   organizationName := "Jeff May",
-  version := "0.6.0",
+  version := "0.7.0",
   scalaVersion := "2.11.6",
   crossScalaVersions := Seq("2.11.6", "2.10.4")
 )
@@ -55,3 +55,6 @@ lazy val akkaConstructTest = (project in file("akkaConstructTest")).settings(com
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion
   )
 ).dependsOn(akkaConstruct % "compile->compile;test->test")
+
+// Disable publishing for aggregate root
+publish := {}
