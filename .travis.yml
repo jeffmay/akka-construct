@@ -1,5 +1,0 @@
-language: scala
-script:
-  - sbt +clean coverage +test coverageAggregate coverageReport
-after_success:
-  - sbt coveralls
