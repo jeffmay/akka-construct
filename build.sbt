@@ -1,29 +1,20 @@
 lazy val commonRootSettings = Seq(
   organization := "me.jeffmay",
   organizationName := "Jeff May",
-  version := "0.7.1",
-  scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.11.8", "2.10.4")
+  version := "1.0.0",
+  scalaVersion := "2.11.8"
 )
 
 commonRootSettings
 
-lazy val akkaVersion = "2.3.11"
+lazy val akkaVersion = "2.4.8"
 
 lazy val common = commonRootSettings ++ Seq(
   // force scala version
   ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) },
-  scalacOptions := {
-    // the deprecation:false flag is only supported by scala >= 2.11.3, but needed for scala >= 2.11.0 to avoid warnings
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, scalaMinor)) if scalaMinor >= 11 =>
-        // For scala versions >= 2.11.3
-        Seq("-Xfatal-warnings", "-deprecation:false")
-      case Some((2, scalaMinor)) if scalaMinor < 11 =>
-        // For scala versions 2.10.x
-        Seq("-Xfatal-warnings")
-    }
-  } ++ Seq(
+  scalacOptions := Seq(
+    "-Xfatal-warnings",
+    "-deprecation:false",
     "-feature",
     "-Xlint",
     "-Ywarn-dead-code",
