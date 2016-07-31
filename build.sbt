@@ -1,9 +1,9 @@
 lazy val commonRootSettings = Seq(
   organization := "me.jeffmay",
   organizationName := "Jeff May",
-  version := "0.7.0",
-  scalaVersion := "2.11.6",
-  crossScalaVersions := Seq("2.11.6", "2.10.4")
+  version := "0.7.1",
+  scalaVersion := "2.11.8",
+  crossScalaVersions := Seq("2.11.8", "2.10.4")
 )
 
 commonRootSettings
@@ -40,13 +40,14 @@ lazy val common = commonRootSettings ++ Seq(
   publishArtifact in (Compile, packageDoc) := false,
   // Apache 2 licence
   licenses += ("Apache-2.0", url("http://opensource.org/licenses/apache-2.0"))
-) ++ bintraySettings ++ bintrayPublishSettings
+)
 
 lazy val akkaConstruct = (project in file("akkaConstruct")).settings(common: _*).settings(
   name := "akka-construct",
   libraryDependencies ++= Seq(
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
-  )
+  ),
+  publishArtifact in Test := true
 )
 
 lazy val akkaConstructTest = (project in file("akkaConstructTest")).settings(common: _*).settings(
