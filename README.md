@@ -1,5 +1,5 @@
 <a href='https://travis-ci.org/jeffmay/akka-construct'>
-  <img src='https://travis-ci.org/jeffmay/akka-construct.svg' alt='Build Status' />
+  <img src='https://travis-ci.org/jeffmay/akka-construct.svg?branch=master' alt='Build Status' />
 </a>
 <a href='https://coveralls.io/github/jeffmay/akka-construct?branch=master'>
   <img src='https://coveralls.io/repos/jeffmay/akka-construct/badge.svg?branch=master&service=github' alt='Coverage Status' />
